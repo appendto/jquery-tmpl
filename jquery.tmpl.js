@@ -76,8 +76,8 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "jQuery.each($1,function($2){with(this){",
-				suffix: "}});"
+				prefix: "(function(){var $first=true;jQuery.each($1,function($2){with(this){",
+				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {
         prefix: "if($SAFE){",

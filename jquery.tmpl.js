@@ -103,11 +103,11 @@
 			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$,_.data):'');"
 			},
 			"html": {
-				prefix: "_.push(typeof $SAFE==='function'?$SAFE.call(this):$SAFE);"
+				prefix: "_tmp=$SAFE;_.push(typeof _tmp==='function'?_tmp.call(this):_tmp);"
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "_.push($.encode(typeof $SAFE==='function'?$SAFE.call(this):$SAFE));"
+				prefix: "_tmp=$SAFE;_.push($.encode(typeof _tmp==='function'?_tmp.call(this):_tmp));"
 			}
 		},
 
@@ -131,7 +131,7 @@
       
       // Convert the template into JavaScript
 		  var m, stack = [], s = [
-		    "var $=jQuery,_=[];", 
+		    "var $=jQuery,_=[],_tmp;", 
 		    "_.data=$data;", 
 		    "_.index=$i||0;",
 		    "with($data){" // Introduce the data as local variables using with(){}

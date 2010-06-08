@@ -18,7 +18,9 @@
 var O = {
     one: "first",
     two: "second",
+    v: "test",
     arr: ["AA","BB","CC"],
+    dict: {"leovinus":"this","scraliontis":"that","brobostigon":"other"},
     fun: function () {
       return 'RETURNED';
     }
@@ -263,20 +265,27 @@ test("Variables", function() {
   test_handler( 'echoing escapes & < >', R("{{= '-<&>-<&>-' }}"), '-&lt;&amp;&gt;-&lt;&amp;&gt;-' );
 
 });
-/*
 test("Caching", function() {
 
-  //jQuery.templates['name'] = jQuery.tmpl( "name: {{= v }}" );
-  //test_handler( "caching and including templates", R('name', O), 'name: test' );
+  // these tests are a bit awkward because caching is done in $.render, not $.tmpl
+
+  jQuery.templates['name'] = jQuery.tmpl( "<span>name: {{= v }}</span>" );
+  test_handler( "using a named template", $.render('name', O)[0].innerHTML, 'name: test' );
+
+  var $elm = $( "<span>name: {{= v }}</span>" );
+  $elm.render(O);
+  test_handler( "reusing a template cached in node data", $elm.data("tmpl").call(O, jQuery, O, 0), 'name: test' );
 
 });
-*/
 test("Tag: each", function() {
 
   test_handler( "loop", R('{{each arr}}{{= $i }}:{{= this }}/{{/each}}', O), '0:AA/1:BB/2:CC/' );
   test_handler( "loop", R('{{ each arr as i, item }}{{= i }}:{{= item }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
   test_handler( "loop", R('{{ each arr as i, item }}{{= i }}:{{= this }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
   test_handler( "loop", R('{{ each arr }}{{= $i }}:{{= this }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
+
+  test_handler( "first", R('{{ each dict }}{{= $i }}:{{ if $first }}first{{ else }}!first{{ /if }}/{{ /each }}', O), 'leovinus:first/scraliontis:!first/brobostigon:!first/' );
+  test_handler( "first", R('{{ each dict }}{{ if !$first }}, {{ /if }}{{= $i }}:{{ = this }}{{ /each }}', O), 'leovinus:this, scraliontis:that, brobostigon:other' );
 
   test_handler( 'errors are passed back correctly (syntax)', R("{{each arr}}{{= $i }}{{ syntax_error }}{{/each}}",O), SyntaxError );
   test_handler( 'errors are passed back correctly (reference)', R("{{each arr}}{{= $i }}{{ reference_error }}{{/each}}",O), ReferenceError );

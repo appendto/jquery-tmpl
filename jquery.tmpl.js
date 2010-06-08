@@ -140,7 +140,7 @@
 		    "_.index=$i||0;",
 		    "with($data){" // Introduce the data as local variables using with(){}
 		  ];
-		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\s+([\s\S]*?))?(?:\s+as\s+(.*?))?\s*}}/ ) ) {
+		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\s+((?:[^'"]*?|"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')*?))?(?:\s+as\s+(.*?))?\s*}}/ ) ) {
 		    
 		    // have prefix before tag
 		    if ( m[1] ) {

@@ -45,7 +45,11 @@
 			// We're pulling from a script node
 			} else if ( tmpl.nodeType ) {
 				var node = tmpl, elemData = jQuery.data( node );
-				fn = elemData.tmpl || jQuery.tmpl( node.innerHTML );
+
+				if ( !( fn = elemData.tmpl ) ) {
+					// fill cache
+					jQuery.data( node, "tmpl", fn = jQuery.tmpl( node.innerHTML ) );
+				}
 			}
 
 			fn = fn || jQuery.tmpl( tmpl );

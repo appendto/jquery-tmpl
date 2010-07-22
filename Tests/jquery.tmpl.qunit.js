@@ -422,4 +422,25 @@ module("Commands");
 		test_handler("encoded", R('{{= html}}', testData), '&lt;a&gt;');
 		test_handler("unencoded", R('{{html html}}', testData), '<a>');
 	});
+
+module("Script Tag Caching");
+
+	test("Template Reuse", function(){
+		
+		test_handler("simple test", (function(){
+			var template = $('#reuse'),
+				data = {data: 'pass1'};
+				
+			var pass1 = template.render(data).html();
+			
+			data = {data: 'pass2'};
+			
+			var pass2 = template.render(data).html();
+		
+			return pass1 == 'pass1' && pass2 == 'pass2';
+		
+		})(), true);		
 	
+	});
+		
+

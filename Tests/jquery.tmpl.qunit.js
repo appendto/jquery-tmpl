@@ -398,6 +398,26 @@ module("Commands");
 		
 	});
 	
+	test("Complex Nesting", function(){
+	
+		var nestedData = [
+				{foo: {bar: 1} },
+				{foo: {bar: 2} },
+				{foo: {bar: 3} }
+			],
+			template = '{{each this}}{{ with this.foo as foo }}{{= foo.bar }}{{ /with}}{{ /each }}';
+			
+		test_handler( "{{each}} > {{with}}", R(template, nestedData), '123' );
+
+		jQuery.templates['test'] = jQuery.tmpl('{{= foo.bar }}');		
+		template = '{{each this}}{{ with this.foo as foo }}{{include "test" }}{{ /with}}{{ /each }}';
+	  test_handler( "{{each}} > {{with}} > {{include}}", R(template, nestedData), '123' );
+
+		jQuery.templates['test'] = jQuery.tmpl('{{with foo.bar as bar}}{{= bar }}{{/with}}');
+	  test_handler( "{{each}} > {{with}} > {{include}} > {{with}}", R(template, nestedData), '123' );
+	
+	});
+	
 	test("Html Output Unecoded {{html }}", function(){
 		test_handler("encoded", R('{{= html}}', testData), '&lt;a&gt;');
 		test_handler("unencoded", R('{{html html}}', testData), '<a>');

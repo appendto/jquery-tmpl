@@ -252,6 +252,9 @@ module("Basics");
 	  test_handler( "Logical AND", R('{{= zero && "TRUEY" }}',{ zero: 1 }), "TRUEY" );
 	  test_handler( "Conditional Operator", R('{{= zero ? "zero" : "other" }}',{ zero: 1 }), "zero" );
 	  test_handler( "Unary logical NOT", R('{{= !zero }}',{ zero: 1 }), "false" );
+	  
+	  test_handler( "Single-Quoted Strings", R("{{= 'test' }}",{}), "test" );
+	  test_handler( "Single-Quoted Comparison", R("{{= 'test' == testvar }}",{ testvar: 'test' }), "true" );
 	});
 
 	test("Disallowed / Illegal", function(){
@@ -293,6 +296,11 @@ module("Commands");
 	  test_handler( "first", R('{{ each dict }}{{= $i }}:{{ if $first }}first{{ else }}!first{{ /if }}/{{ /each }}', testData), 'leovinus:first/scraliontis:!first/brobostigon:!first/' );
 	  test_handler( "first", R('{{ each dict }}{{ if !$first }}, {{ /if }}{{= $i }}:{{ = this }}{{ /each }}', testData), 'leovinus:this, scraliontis:that, brobostigon:other' );
 
+		test_handler("html content", R('{{each arr}}<a>{{= $i }}</a>{{/each}}', testData), '<a>0</a><a>1</a><a>2</a>' );
+		test_handler("html content", R('{{each arr}}<a>{{= this }}</a>{{/each}}', testData), '<a>AA</a><a>BB</a><a>CC</a>' );
+		test_handler("html content", R('{{each this}}<a>{{= data }}</a>{{/each}}', [{data: 0}, {data: 1}, {data: 2}]), '<a>0</a><a>1</a><a>2</a>' );
+		test_handler("html content with newlines", R('{{each this}}\n<a>{{= data }}</a>\n{{/each}}', [{data: 0}, {data: 1}, {data: 2}]), '\n<a>0</a>\n\n<a>1</a>\n\n<a>2</a>\n' );
+
 	  test_handler( 'errors are passed back correctly (syntax)', R("{{each arr}}{{= $i }}{{ syntax_error }}{{/each}}", testData), SyntaxError );
 	  test_handler( 'errors are passed back correctly (reference)', R("{{each arr}}{{= $i }}{{ reference_error }}{{/each}}", testData), ReferenceError );
 	  test_handler( 'errors are passed back correctly (type)', R("{{each arr}}{{= $i }}{{ type_error }}{{/each}}", testData), TypeError );
@@ -306,6 +314,10 @@ module("Commands");
 	  test_handler( "operations on passed variable work", R('{{ with "123" + one + "456" as foo }}{{= foo }}{{ /with }}', testData), '123first456' );
 	  test_handler( "works with member lookups", R('{{ with a.b.c as foo }}{{= foo }}{{ /with }}', {a:{b:{c:"bar"}}}), 'bar' );
 	  test_handler( "member lookups accept operations", R('{{ with (a.b.c + 5) as foo }}{{= foo + 2 }}{{ /with }}', {a:{b:{c:5}}}), '12' );
+		test_handler("missing 'as' clause", R('{{ with a.b.c }}{{= c }}{{ /with }}', {a:{b:{c:"bar"}}}), '' );
+		test_handler("nested tags - 1 level", R('{{ with first.second as second }}{{ with second.third as third }}{{= third }}{{ /with }}{{ /with }}', {first: {second: {third: 1} } }), '1');
+		test_handler("nested tags - 2 levels", R('{{ with first.second as second }}{{ with second.third as third }}{{ with third.fourth as fourth }}{{= fourth }}{{ /with }}{{ /with }}{{ /with }}', {first: {second: {third: {fourth: '1'} } } }), '1');
+
 	  test_handler( 'errors are passed back correctly (syntax)', R("{{with arr}}{{= $i }}{{ syntax_error }}{{/with}}", testData), SyntaxError );
 	  test_handler( 'errors are passed back correctly (reference)', R("{{with arr}}{{= $i }}{{ reference_error }}{{/with}}", testData), ReferenceError );
 	  test_handler( 'errors are passed back correctly (type)', R("{{with arr}}{{= $i }}{{ type_error }}{{/with}}", testData), TypeError );

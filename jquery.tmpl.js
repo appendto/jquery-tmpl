@@ -8,7 +8,7 @@
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip,
 			safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
-			context_var = "var _params = '$2'.split(/,\\s?/), _context = undefined; if(_params.length){ _context = {}; $.each(_params, function () { _context[this] = eval(this) }); }",
+			context_var = "var _params = '$2'.split(/,\\s?/), _context = undefined; if(_params.length){ _context = {}; $.each(_params, function (i, item) { _context[item] = eval(item) }); }",
 			rx_oper	 = /((<<|>?>>|[&\*\+-\/\^\|])?=|\+\+|--|\{|\}|\[)/,
 			rx_keywd = /\b(break|(cas|els|continu|delet|whil)e|(ca|swi)tch|with|default|do|finally|try|for|var|function|return|if|new|throw|void)\b/;
 	
@@ -81,7 +81,7 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "(function(){var $first=true;jQuery.each($1,function($2){with(this){",
+				prefix: "(function(){var $first=true;jQuery.each($1,function($2){ $CONTEXT with(this){",
 				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {
@@ -105,7 +105,7 @@
 				suffix: "}.call(this,$SAFE))"
 			},
 			"include": {
-				prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$, typeof _context!=='undefined'?_context:_.data):'');"
+				prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$, typeof _context !== 'undefined' ? _context : _.data):'');"
 			},
 			"html": {
 				prefix: "_tmp=$SAFE;_.push(typeof _tmp==='function'?_tmp.call(this):_tmp);"

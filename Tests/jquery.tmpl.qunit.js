@@ -14,8 +14,6 @@ var R = function ( tmpl, data ) {
   try {
     var fn = jQuery.tmpl( tmpl );
     
-    console.log(tmpl + '\n\n' + fn.toString());
-    
     return fn.call( data||{}, jQuery, data||{}, 0 );
   }
   catch ( e ) {
@@ -405,10 +403,9 @@ module("Commands");
 
 		jQuery.templates['test'] = jQuery.tmpl('{{= n }}');
 		test_handler( "{{each}} index variable", R('{{each arr as n,item}}{{ include "test" }}{{/each}}', testData), '012' );
-		
+
 		jQuery.templates['test'] = jQuery.tmpl('{{= b.c }}');
 		test_handler( "{{with}} scope", R('{{with a.b as b}}{{ include "test" }}{{/with}}', {a: {b: {c: 1} } }), '1' );
-		
 		
 	});
 	

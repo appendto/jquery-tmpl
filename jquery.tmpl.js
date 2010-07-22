@@ -8,6 +8,7 @@
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip,
 	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
+	    $context = "var _params = '$2'.split(/,\\s?/), _context = undefined; if(_params.length){ _context = {}; $.each(_params, function (i, item) { _context[item] = eval(item) }); }",
 	    rx_oper  = /((<<|>?>>|[&\*\+-\/\^\|])?=|\+\+|--|\{|\}|\[)/,
 	    rx_keywd = /\b(break|(cas|els|continu|delet|whil)e|(ca|swi)tch|with|default|do|finally|try|for|var|function|return|if|new|throw|void)\b/;
   
@@ -62,8 +63,8 @@
 				return jQuery.map( data, function( data, i ) {
 					return $( fn.call( data, jQuery, data, i ) ).get();
 				});
-
-			} else {
+			}
+			else {
 				return $( fn.call( data, jQuery, data, 0 ) ).get();
 			}
 		},
@@ -80,7 +81,7 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "(function(){var $first=true;jQuery.each($1,function($2){with(this){",
+				prefix: "(function(){var $first=true;jQuery.each($1,function($2){ $CONTEXT with(this){",
 				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {
@@ -98,13 +99,17 @@
 			"else": {
 				prefix: "}else{"
 			},
+			"elseif": {
+        prefix: "}else if($SAFE){",
+				suffix: "}"
+			},			
 			"with": {
 			  _default: [ "", "" ],
-			  prefix: "(function($2){",
+			  prefix: "(function($2){ $CONTEXT ",
 			  suffix: "}.call(this,$SAFE))"
 			},
 			"include": {
-			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$,_.data):'');"
+			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this, $, typeof _context !== 'undefined' ? _context : _.data):'');"
 			},
 			"html": {
 				prefix: "_tmp=$SAFE;_.push(typeof _tmp==='function'?_tmp.call(this):_tmp);"
@@ -120,7 +125,7 @@
 		},
 
 		tmpl: function( str, data, i ) {
-		  
+			var base = str;
 		  var rx_esc = /(\\(?!["'])|[\n\r\b\t])/g, 
 		      fn_esc = function ( a ) {
 		          var h = a.charCodeAt( 0 ).toString( 16 );
@@ -156,7 +161,7 @@
 				}
 
         // escape any escapables within arguments strings
-        if ( args && /['"]/.test( args ) ) {
+        if ( args && /['"]/.test( args ) ) { //'// Syntax Highlighting Fix
           args = args.replace(/(")((?:\\"|[^"])*?)"|(')((?:\\'|[^'])*?)'/g, function ( a, b, c, d, e ) {
             return (b||d) + (c || e || '').replace( rx_esc, fn_esc ) + (b||d);
           });
@@ -201,13 +206,13 @@
         }
 
 		    s.push( tmpl[ slash ? "suffix" : "prefix" ]
-		              .split("$SAFE").join( safe_var )
-					        .split("$1").join( args   || def[0] )
-					        .split("$2").join( fnargs || def[1] )
-					        );
+					.split('$CONTEXT').join($context)
+					.split("$SAFE").join( safe_var )
+					.split("$1").join( args   || def[0] )
+					.split("$2").join( fnargs || def[1] )
+				);
 				
 				str = str.substr( m[0].length );
-		    
 		  }
 		  
 		  // push any remaining string 
@@ -223,7 +228,7 @@
 
 			// Provide some basic currying to the user
 			return data ? jQuery( fn.call( this, jQuery, data, i ) ).get() : fn;
-
+	
 		}
 	});
 })(jQuery);

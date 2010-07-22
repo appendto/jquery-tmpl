@@ -376,12 +376,30 @@ module("Commands");
 	  jQuery.templates['test'] = jQuery.tmpl('{{= "test" }}');
 	  test_handler( "simple include", R('{{ include "test" }}'), 'test' );
 
-	  jQuery.templates['test2'] = jQuery.tmpl('{{ each arr as n,itm }}[{{= itm }}]-{{ /each }}');
-	  test_handler( "data access", R('{{ include "test2" }}', testData), '[AA]-[BB]-[CC]-' );
+	  jQuery.templates['test'] = jQuery.tmpl('{{ each arr as n,itm }}[{{= itm }}]-{{ /each }}');
+	  test_handler( "data access", R('{{ include "test" }}', testData), '[AA]-[BB]-[CC]-' );
 
+		var nestedData = {foo: 'bar'};
+
+		jQuery.templates['nested'] = jQuery.tmpl('{{ include "nested1" }}');
+		jQuery.templates['nested1'] = jQuery.tmpl('{{= foo }}');
+
+		test_handler( "nested - 1 level", R('{{ include "nested" }}', nestedData), 'bar' );
+		
+		jQuery.templates['nested1'] = jQuery.tmpl('{{ include "nested2" }}');
+		jQuery.templates['nested2'] = jQuery.tmpl('{{= foo}}');
+		
+		test_handler( "nested - 2 levels", R('{{ include "nested" }}', nestedData), 'bar' );
+		
+		nestedData = {foo: {bar: {sweet: 1} } };
+		jQuery.templates['nested2'] = jQuery.tmpl('{{= foo.bar.sweet }}');
+		
+		test_handler( "nested - 2 levels - complex data", R('{{ include "nested" }}', nestedData), '1' );
+		
 	});
 	
 	test("Html Output Unecoded {{html }}", function(){
 		test_handler("encoded", R('{{= html}}', testData), '&lt;a&gt;');
 		test_handler("unencoded", R('{{html html}}', testData), '<a>');
 	});
+	

@@ -1,17 +1,17 @@
 /*
  * jQuery Templating Plugin
- *   NOTE: Created for demonstration purposes.
+ *	 NOTE: Created for demonstration purposes.
  * Copyright 2010, John Resig
  * Dual licensed under the MIT or GPL Version 2 licenses.
  */
 (function(jQuery){
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip,
-	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
-	    $context = "var _params = '$2'.split(/,\\s?/), _context = undefined; if(_params.length){ _context = {}; $.each(_params, function (i, item) { _context[item] = eval(item) }); }",
-	    rx_oper  = /((<<|>?>>|[&\*\+-\/\^\|])?=|\+\+|--|\{|\}|\[)/,
-	    rx_keywd = /\b(break|(cas|els|continu|delet|whil)e|(ca|swi)tch|with|default|do|finally|try|for|var|function|return|if|new|throw|void)\b/;
-  
+			safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
+			$context = "var _params = '$2'.split(/,\\s?/), _context = undefined; if(_params.length){ _context = {}; $.each(_params, function (_i, _item) { _context[_item] = eval(_item) }); }",
+			rx_oper	 = /((<<|>?>>|[&\*\+-\/\^\|])?=|\+\+|--|\{|\}|\[)/,
+			rx_keywd = /\b(break|(cas|els|continu|delet|whil)e|(ca|swi)tch|with|default|do|finally|try|for|var|function|return|if|new|throw|void)\b/;
+	
 	jQuery.fn.extend({
 		render: function( data ) {
 			return this.map(function(i, tmpl){
@@ -74,8 +74,8 @@
 
 		/*
 		 * For example, someone could do:
-		 *   jQuery.templates.foo = jQuery.tmpl("some long templating string");
-		 *   $("#test").append("foo", data);
+		 *	 jQuery.templates.foo = jQuery.tmpl("some long templating string");
+		 *	 $("#test").append("foo", data);
 		 */
 
 		tmplcmd: {
@@ -85,7 +85,7 @@
 				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {
-        prefix: "if($SAFE){",
+				prefix: "if($SAFE){",
 				suffix: "}"
 			},
 			"ifdef": {
@@ -100,16 +100,16 @@
 				prefix: "}else{"
 			},
 			"elseif": {
-        prefix: "}else if($SAFE){",
+				prefix: "}else if($SAFE){",
 				suffix: "}"
 			},			
 			"with": {
-			  _default: [ "", "" ],
-			  prefix: "(function($2){ $CONTEXT ",
-			  suffix: "}.call(this,$SAFE))"
+				_default: [ "", "" ],
+				prefix: "(function($2){ $CONTEXT ",
+				suffix: "}.call(this,$SAFE))"
 			},
 			"include": {
-			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this, $, typeof _context !== 'undefined' ? _context : _.data):'');"
+				prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this, $, typeof _context !== 'undefined' ? _context : _.data):'');"
 			},
 			"html": {
 				prefix: "_tmp=$SAFE;_.push(typeof _tmp==='function'?_tmp.call(this):_tmp);"
@@ -126,105 +126,105 @@
 
 		tmpl: function( str, data, i ) {
 			var base = str;
-		  var rx_esc = /(\\(?!["'])|[\n\r\b\t])/g, 
-		      fn_esc = function ( a ) {
-		          var h = a.charCodeAt( 0 ).toString( 16 );
-              return '\\u0000'.substring( 0, 6 - h.length ) + h;
-            };
-		  
-		  // remove all comments {# ... #} from the template string
-		  str = str.replace( /\{#("(\"|[^"])*?"|'(\'|[^'])*?'|[\S\s])*?#\}/g, '' );
-      
-		  // Convert alternate variable syntax (${ ... }) into tag syntax ({{= ... }})
-		  str = str.replace(/\${([^}]*)}/g, "{{= $1}}");
-      
-      // Convert the template into JavaScript
-		  var m, stack = [], s = [
-		    "var $=jQuery,_=[],_tmp;", 
-		    "_.data=$data;", 
-		    "_.index=$i||0;",
-		    "with($data){" // Introduce the data as local variables using with(){}
-		  ];
-		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\s+((?:[^'"]*?|"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')*?))?(?:\s+as\s+(.*?))?\s*}}/ ) ) {
-		    
-		    // have prefix before tag
-		    if ( m[1] ) {
-          s.push( "_.push('" + m[1].replace( rx_esc, fn_esc ) + "');" );
-		    }
+			var rx_esc = /(\\(?!["'])|[\n\r\b\t])/g, 
+					fn_esc = function ( a ) {
+							var h = a.charCodeAt( 0 ).toString( 16 );
+							return '\\u0000'.substring( 0, 6 - h.length ) + h;
+						};
+			
+			// remove all comments {# ... #} from the template string
+			str = str.replace( /\{#("(\"|[^"])*?"|'(\'|[^'])*?'|[\S\s])*?#\}/g, '' );
+			
+			// Convert alternate variable syntax (${ ... }) into tag syntax ({{= ... }})
+			str = str.replace(/\${([^}]*)}/g, "{{= $1}}");
+			
+			// Convert the template into JavaScript
+			var m, stack = [], s = [
+				"var $=jQuery,_=[],_tmp;", 
+				"_.data=$data;", 
+				"_.index=$i||0;",
+				"with($data){" // Introduce the data as local variables using with(){}
+			];
+			while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\s+((?:[^'"]*?|"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')*?))?(?:\s+as\s+(.*?))?\s*}}/ ) ) {
+				
+				// have prefix before tag
+				if ( m[1] ) {
+					s.push( "_.push('" + m[1].replace( rx_esc, fn_esc ) + "');" );
+				}
 
-		    var slash = m[2], type = m[3], args = m[4], fnargs = m[5];
+				var slash = m[2], type = m[3], args = m[4], fnargs = m[5];
 
-		    // have a matching template
-		    var tmpl = jQuery.tmplcmd[ type ];
-		    if ( !tmpl ) {
+				// have a matching template
+				var tmpl = jQuery.tmplcmd[ type ];
+				if ( !tmpl ) {
 					throw ReferenceError("Template tag not found: " + type);
 				}
 
-        // escape any escapables within arguments strings
-        if ( args && /['"]/.test( args ) ) { //'// Syntax Highlighting Fix
-          args = args.replace(/(")((?:\\"|[^"])*?)"|(')((?:\\'|[^'])*?)'/g, function ( a, b, c, d, e ) {
-            return (b||d) + (c || e || '').replace( rx_esc, fn_esc ) + (b||d);
-          });
-        }
+				// escape any escapables within arguments strings
+				if ( args && /['"]/.test( args ) ) { //'// Syntax Highlighting Fix
+					args = args.replace(/(")((?:\\"|[^"])*?)"|(')((?:\\'|[^'])*?)'/g, function ( a, b, c, d, e ) {
+						return (b||d) + (c || e || '').replace( rx_esc, fn_esc ) + (b||d);
+					});
+				}
 
-        // attempt to block mutating as much is reasonably possible by limiting syntax
-        // user can theoretically do `arrayname.slice(1,2)` but then that is his mess to deal with
-        if ( args || fnargs ) {
-          var fail,
-              cleaned = (args + ' ' +fnargs).replace( /"(?:\\"|[^"])*?"|'(?:\\'|[^'])*?'|[!=]=+|([^<>])[><]=|\b\[/g, '$1' ),
-              tag = m[0].substr( ( m[1] || '' ).length );
-          // disallow: {}, =, +=, -=, *=, /=, >>=, <<=, >>>=, &=, |=, ^=, ++, --
-          if ( (fail = cleaned.match( rx_oper )) ) {
-            throw SyntaxError('Illegal template operator "' + fail[0] + '" in ' + tag);
-          }
-          // disallow: break, case, catch, continue, default, delete, do, else, finally, for, function, if, new, return, 
-          //           switch, throw, try, var, void, while, with
-          else if ( fail = cleaned.match( rx_keywd ) ) {
-            throw SyntaxError('Illegal reserved word "' +  fail[0] + '" in ' + tag);
-          }
-        }
-		    
-		    // default args & fnargs
-		    var tag, def = tmpl._default || [];
-        
-        // for tags that define both a prefix and a suffix, keep a stack of nesting...
-        if ( tmpl.prefix && tmpl.suffix ) {
-          if ( slash ) {
-            // pop stack
-            tag = stack.pop();
-            if ( !tag || tag[0] !== type ) {
-              throw SyntaxError('Unexpected termination by "' + type +'".');
-            }
-            // recall opener arguments
-            args = tag[1];
-            fnargs = tag[2];
-          }
-          else  {
-            // push to stack
-            stack.push([ type, args, fnargs ]);
-          }
-        }
+				// attempt to block mutating as much is reasonably possible by limiting syntax
+				// user can theoretically do `arrayname.slice(1,2)` but then that is his mess to deal with
+				if ( args || fnargs ) {
+					var fail,
+							cleaned = (args + ' ' +fnargs).replace( /"(?:\\"|[^"])*?"|'(?:\\'|[^'])*?'|[!=]=+|([^<>])[><]=|\b\[/g, '$1' ),
+							tag = m[0].substr( ( m[1] || '' ).length );
+					// disallow: {}, =, +=, -=, *=, /=, >>=, <<=, >>>=, &=, |=, ^=, ++, --
+					if ( (fail = cleaned.match( rx_oper )) ) {
+						throw SyntaxError('Illegal template operator "' + fail[0] + '" in ' + tag);
+					}
+					// disallow: break, case, catch, continue, default, delete, do, else, finally, for, function, if, new, return, 
+					//					 switch, throw, try, var, void, while, with
+					else if ( fail = cleaned.match( rx_keywd ) ) {
+						throw SyntaxError('Illegal reserved word "' +	 fail[0] + '" in ' + tag);
+					}
+				}
+				
+				// default args & fnargs
+				var tag, def = tmpl._default || [];
+				
+				// for tags that define both a prefix and a suffix, keep a stack of nesting...
+				if ( tmpl.prefix && tmpl.suffix ) {
+					if ( slash ) {
+						// pop stack
+						tag = stack.pop();
+						if ( !tag || tag[0] !== type ) {
+							throw SyntaxError('Unexpected termination by "' + type +'".');
+						}
+						// recall opener arguments
+						args = tag[1];
+						fnargs = tag[2];
+					}
+					else	{
+						// push to stack
+						stack.push([ type, args, fnargs ]);
+					}
+				}
 
-		    s.push( tmpl[ slash ? "suffix" : "prefix" ]
+				s.push( tmpl[ slash ? "suffix" : "prefix" ]
 					.split('$CONTEXT').join($context)
 					.split("$SAFE").join( safe_var )
-					.split("$1").join( args   || def[0] )
+					.split("$1").join( args		|| def[0] )
 					.split("$2").join( fnargs || def[1] )
 				);
 				
 				str = str.substr( m[0].length );
-		  }
-		  
-		  // push any remaining string 
-	    if ( str ) {
-        s.push( "_.push('" + str.replace( rx_esc, fn_esc ) + "');" );
-	    }
-		  
-		  s.push( "}", "return _.join('');" );
+			}
+			
+			// push any remaining string 
+			if ( str ) {
+				s.push( "_.push('" + str.replace( rx_esc, fn_esc ) + "');" );
+			}
+			
+			s.push( "}", "return _.join('');" );
 
 			// Generate a reusable function that will serve as a template
 			// generator (and which will be cached).
-      var fn = new Function( "jQuery","$data","$i", s.join('\n') );
+			var fn = new Function( "jQuery","$data","$i", s.join('\n') );
 
 			// Provide some basic currying to the user
 			return data ? jQuery( fn.call( this, jQuery, data, i ) ).get() : fn;

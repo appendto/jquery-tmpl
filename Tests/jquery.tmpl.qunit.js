@@ -396,6 +396,11 @@ module("Commands");
 		
 		test_handler( "nested - 2 levels - complex data", R('{{ include "nested" }}', nestedData), '1' );
 		
+		jQuery.templates['test'] = jQuery.tmpl('{{= $i }}');
+		test_handler( "{{each}} index variable", R('{{each arr}}{{ include "test" }}{{/each}}', testData), '012' );
+
+		jQuery.templates['test'] = jQuery.tmpl('{{= n }}');
+		test_handler( "{{each}} index variable", R('{{each arr as n,item}}{{ include "test" }}{{/each}}', testData), '012' );
 	});
 	
 	test("Complex Nesting", function(){

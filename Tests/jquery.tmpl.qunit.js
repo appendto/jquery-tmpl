@@ -34,13 +34,13 @@ function test_handler( test_name, res, exp ) {
 	}
 }
 
-
 // these are used throughout to test if tag blocks suppress them
 jQuery.tmplcmd.syntax_error		 = { prefix: "throw SyntaxError('test syntax error');" };
 jQuery.tmplcmd.reference_error = { prefix: "throw ReferenceError('test reference error');" };
 jQuery.tmplcmd.type_error			 = { prefix: "throw TypeError('test type error');" };
 
 module("Basics");
+
 
 	test("Basic Function", function() {
 
@@ -456,5 +456,4 @@ module("Script Tag Caching");
 		})(), true);		
 	
 	});
-		
-
+	

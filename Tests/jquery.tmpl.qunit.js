@@ -163,8 +163,8 @@ module("Basics");
 		test_handler( "string quote escapes (double)", R('{{= "str\\"i\\"ng" }}', testData), 'str"i"ng' );
 		test_handler( "string quote escapes (single)", R("{{= 'str\\'i\\'ng' }}", testData), "str'i'ng" );
 
-		test_handler( "string output with tag", R('{{= "{{ tag }}" }}', testData), "{{ tag }}" );
-		test_handler( "string output with end of tag", R('{{= "}}" }}', testData), "}}" );
+		test_handler( "string output with tag", R('{{= "\\{\\{ tag \\}\\}" }}', testData), "{{ tag }}" );
+		test_handler( "string output with end of tag", R('{{= "\\}\\}" }}', testData), "}}" );
 
 		test_handler( 'empty variable tag (with tabs whitespace)', R("{{=\t\t}}", "self"), 'self' );
 		test_handler( 'empty variable tag', R("{{= }}", "self"), 'self' );

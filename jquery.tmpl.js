@@ -162,8 +162,15 @@
 					throw ReferenceError("Template tag not found: " + type);
 				}
 
+				//escape { and } braces.
+				var rx_braces = /\\([}|{])/g;
+				if(args && rx_braces.test(args)){
+					args = args.replace(rx_braces, '$1');
+				}
+
 				// escape any escapables within arguments strings
 				if ( args && /['"]/.test( args ) ) { //'// Syntax Highlighting Fix
+					var o = args;
 					args = args.replace(/(")((?:\\"|[^"])*?)"|(')((?:\\'|[^'])*?)'/g, function ( a, b, c, d, e ) {
 						return (b||d) + (c || e || '').replace( rx_esc, fn_esc ) + (b||d);
 					});

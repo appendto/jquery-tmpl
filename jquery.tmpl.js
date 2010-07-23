@@ -170,7 +170,6 @@
 
 				// escape any escapables within arguments strings
 				if ( args && /['"]/.test( args ) ) { //'// Syntax Highlighting Fix
-					var o = args;
 					args = args.replace(/(")((?:\\"|[^"])*?)"|(')((?:\\'|[^'])*?)'/g, function ( a, b, c, d, e ) {
 						return (b||d) + (c || e || '').replace( rx_esc, fn_esc ) + (b||d);
 					});

@@ -121,7 +121,9 @@
 		},
 
 		encode: function( text ) {
-			return text == null ? '' : ( text + '' ).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+			return text == null ? '' : 
+				( text + '' ).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+				.replace(/&amp;lt;/g,'&lt;').replace(/&amp;gt;/g,'&gt;'); // if &lt;/&gt; exists in the text to be encoded, the result is incorrect.
 		},
 
 		tmpl: function( str, data, i ) {
